@@ -6,3 +6,10 @@ rapidfuzz
 sqlalchemy
 passlib
 requests
+g2p_en
+torch
+torchaudio
+av
+numpy
+soundfile
+transformers
