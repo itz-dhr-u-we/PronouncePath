@@ -244,6 +244,13 @@ async def evaluate_speech(
             predicted_ids = torch.argmax(logits, dim=-1)
             transcription = processor.decode(predicted_ids[0]).lower()
 
+        #silence checks
+        if not transcription or len(transcription) == 0:
+            raise HTTPException(
+                status_code=400, 
+                detail="No speech detected! Please speak clearly into your microphone."
+            )
+
         words = target_text.split()
         recognized_words = transcription.split()
         
@@ -307,7 +314,13 @@ async def evaluate_speech(
         audio_duration_seconds = waveform.shape[1] / 16000
         audio_length_factor = min(100.0, audio_duration_seconds * 15)
         overall_score = round(min(98.0, max(30.0, (ratio * 0.7) + (audio_length_factor * 0.3))), 1)
-
+        # If transcription is empty/blank and score hit the baseline floor, catch it as silence:
+        cleaned_transcription = transcription.strip()
+        if overall_score <= 30.0 and (not cleaned_transcription or len(cleaned_transcription) == 0):
+            raise HTTPException(
+                status_code=400, 
+                detail="No speech detected! Please make sure your microphone is working and speak clearly."
+            )
         pacing_feedback = "Great pronunciation!"
         if audio_duration_seconds < (len(words) * 0.15):
             pacing_feedback = "You spoke quite fast, which can clip words. Try speaking a bit slower and more deliberately."
@@ -323,6 +336,9 @@ async def evaluate_speech(
             "feedback": pacing_feedback,
             "duration_seconds": round(audio_duration_seconds, 2)
         }
+    except HTTPException as he:
+        # HTTPExceptions like 400 silence error
+        raise he
 
     except Exception as e:
         print("Error processing audio via PyAV:", str(e))
