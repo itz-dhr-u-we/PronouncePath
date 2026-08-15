@@ -1,3 +1,13 @@
+---
+title: PronouncePath Backend
+emoji: 🎙️
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_file: backend/main.py
+pinned: false
+---
+
 # PronouncePath
 PronouncePath is a full-stack gamified web application designed to help users improve their pronunciation, speech fluency, and phonetics. Built with a modern tech stack, it evaluates real-time microphone recordings against target sentences, tracks user progression through tiers, and provides detailed word-by-word feedback.
 

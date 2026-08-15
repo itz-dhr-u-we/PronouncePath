@@ -5,7 +5,6 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from g2p_en import G2p
 import torch
-torch.set_num_threads(1)
 import torchaudio
 import io
 import av
